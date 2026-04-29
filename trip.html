@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Confirmation</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, #ff9a9e, #fad0c4);
+        overflow: hidden;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 380px;
+        height: 70vh;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 30px 20px;
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        position: relative;
+    }
+
+    h1 {
+        color: #ffffff;
+        font-size: 1.8rem;
+        margin-bottom: 40px;
+    }
+
+    .btn {
+        padding: 14px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        position: absolute;
+        transition: all 0.25s ease;
+    }
+
+    /* Both buttons aligned at same height */
+    #yesBtn {
+        background: #4CAF50;
+        color: white;
+        top: 60%;
+        left: 30%;
+        transform: translate(-50%, -50%);
+    }
+
+    #yesBtn:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    #noBtn {
+        background: #ff4d4d;
+        color: white;
+        top: 60%;
+        left: 70%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container" id="container">
+    <h1>Plan on for 10th May?</h1>
+
+    <button id="yesBtn" class="btn">Yes</button>
+    <button id="noBtn" class="btn">No</button>
+</div>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const container = document.getElementById("container");
+
+function moveButton() {
+    const btnRect = noBtn.getBoundingClientRect();
+
+    const maxX = container.clientWidth - btnRect.width;
+    const maxY = container.clientHeight - btnRect.height;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+noBtn.addEventListener("touchstart", moveButton);
+noBtn.addEventListener("mouseover", moveButton);
+noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    moveButton();
+});
+
+document.getElementById("yesBtn").addEventListener("click", () => {
+    alert("Confirmed for 10th May");
+});
+</script>
+
+</body>
+</html>
