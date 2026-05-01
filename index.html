@@ -20,10 +20,12 @@
     .container {
         width: 90%;
         max-width: 380px;
-        height: 70vh;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 30px 20px;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: rgba(255,255,255,0.2);
+        padding: 20px;
         border-radius: 20px;
         backdrop-filter: blur(12px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.2);
@@ -31,40 +33,47 @@
     }
 
     h1 {
-        color: #ffffff;
-        font-size: 1.8rem;
-        margin-bottom: 40px;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
+    img {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
     }
 
     .btn {
-        padding: 14px 24px;
-        font-size: 16px;
+        position: absolute;
+        width: 90px;
+        height: 45px;
         border: none;
         border-radius: 10px;
         cursor: pointer;
-        position: absolute;
-        transition: all 0.25s ease;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.12s;
     }
 
-    /* Both buttons aligned at same height */
+    /* Centered alignment */
     #yesBtn {
         background: #4CAF50;
         color: white;
-        top: 60%;
-        left: 30%;
-        transform: translate(-50%, -50%);
-    }
-
-    #yesBtn:hover {
-        transform: translate(-50%, -50%) scale(1.05);
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-120%);
     }
 
     #noBtn {
         background: #ff4d4d;
         color: white;
-        top: 60%;
-        left: 70%;
-        transform: translate(-50%, -50%);
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(20%);
     }
 </style>
 </head>
@@ -72,7 +81,10 @@
 <body>
 
 <div class="container" id="container">
-    <h1>Plan on for 10th May?</h1>
+    <div>
+        <h1>Will you buy me another pair of Jordans, please?</h1>
+        <img src="hamster.png">
+    </div>
 
     <button id="yesBtn" class="btn">Yes</button>
     <button id="noBtn" class="btn">No</button>
@@ -80,30 +92,65 @@
 
 <script>
 const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
 const container = document.getElementById("container");
 
-function moveButton() {
-    const btnRect = noBtn.getBoundingClientRect();
+const SAFE_DISTANCE = 100;
+const GAP = 50;
 
-    const maxX = container.clientWidth - btnRect.width;
-    const maxY = container.clientHeight - btnRect.height;
+// prevent overlap with Yes
+function isTooClose(a, b) {
+    const r1 = a.getBoundingClientRect();
+    const r2 = b.getBoundingClientRect();
 
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+    return !(
+        r1.right + GAP < r2.left ||
+        r1.left > r2.right + GAP ||
+        r1.bottom + GAP < r2.top ||
+        r1.top > r2.bottom + GAP
+    );
 }
 
-noBtn.addEventListener("touchstart", moveButton);
-noBtn.addEventListener("mouseover", moveButton);
-noBtn.addEventListener("click", (e) => {
+// move inside container
+function moveButton() {
+    const maxX = container.clientWidth - noBtn.offsetWidth;
+    const maxY = container.clientHeight - noBtn.offsetHeight;
+
+    let x, y, tries = 0;
+
+    do {
+        x = Math.random() * maxX;
+        y = Math.random() * maxY;
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+
+        tries++;
+    } while (isTooClose(noBtn, yesBtn) && tries < 100);
+}
+
+// escape before touch
+document.addEventListener("pointermove", (e) => {
+    const rect = noBtn.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < SAFE_DISTANCE) {
+        moveButton();
+    }
+});
+
+// emergency escape
+noBtn.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     moveButton();
 });
 
-document.getElementById("yesBtn").addEventListener("click", () => {
-    alert("Confirmed for 10th May");
+// yes → next page
+yesBtn.addEventListener("click", () => {
+    window.location.href = "yay.html";
 });
 </script>
 
